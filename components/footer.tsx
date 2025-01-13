@@ -5,11 +5,11 @@ export function Footer() {
     <footer className="w-full border-t">
       <div className="container flex mx-auto h-14 items-center justify-center">
         <Link
-          href="https://www.shadrizz.com"
+          href="/"
           className="underline"
           target="_blank"
         >
-          www.shadrizz.com
+          Youtube Playlist Manager
         </Link>
       </div>
     </footer>
