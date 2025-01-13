@@ -1,10 +1,8 @@
-import { drizzle } from "drizzle-orm/node-postgres";
-import { Pool } from "pg";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
 import { config } from "./config";
 import { schema } from "./schema";
 
-const pool = new Pool({
-  connectionString: config.DB_URL,
-});
+const client = postgres(config.DB_URL, {prepare : false, ssl: { rejectUnauthorized: false },})
 
-export const db = drizzle(pool, { schema, casing: "snake_case" });
+export const db = drizzle(client, { schema, casing: "snake_case" });

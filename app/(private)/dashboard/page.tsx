@@ -1,18 +1,20 @@
-"use client"
-import { useSession } from "next-auth/react";
+import getChannels from "@/app/actions/getChannels";
 
-export default function Profile() {
-  const { data: session, } = useSession();
-
-  if (!session) {
+export default async function Profile() {
+  const channels = await getChannels()
+  if (!channels) {
     return <p>Not logged in</p>;
   }
-  console.log(session)
+  // const { data: session, } = useSession();
+
+  // if (!session) {
+  //   return <p>Not logged in</p>;
+  // }
+  // console.log(session)
 
   return (
-    <div>
-      {/* <h1>Welcome, {session.user?.name}</h1> */}
-      {/* <p>Access Token: {session.accessToken}</p> */}
-    </div>
+    <>
+
+    </>
   );
 }

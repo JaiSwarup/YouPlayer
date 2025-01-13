@@ -58,8 +58,9 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   callbacks: {
     jwt({ token, user, account }) {
       if (account) {
-        token.accessToken = account.access_token; // Add access token from the account object
-        token.accessToken = account.refresh_token; // Add access token from the account object
+        token.access_token = account.access_token; // Add access token from the account object
+        token.refresh_token = account.refresh_token; 
+        token.id_token = account.id_token// Add access token from the account object
       }
       if (user) {
         token.id = user.id as string;
@@ -72,7 +73,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       session.user.id = token.id as string;
       session.user.role = token.role as string;
       // session.accessToken = token.accessToken as string; // Pass access token to the session
-      return {...session, accessToken : token.accessToken, refreshToken : token.refreshToken};
+      return {...session, access_token : token.access_token, refresh_token : token.refresh_token, id_token: token.id_token};
     },
   },
 })
