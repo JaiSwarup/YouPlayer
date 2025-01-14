@@ -1,39 +1,53 @@
 import React from "react";
+import { eq } from "drizzle-orm/expressions";
+import { redirect } from "next/navigation";
+import { db } from "@/lib/db";
+import { auth } from "@/lib/auth";
 import getChannels from "@/app/actions/getChannels";
-import {
-  Card, 
-  CardContent,
-  CardDescription,
-  CardTitle
-} from "@/components/ui/card";
-import { AvatarImage,
-  Avatar
- } from "@/components/ui/avatar";
+import { users } from "@/schema/users";
 import Link from "next/link";
+import { PrivateHeader } from "@/components/private/private-header";
+import { ChannelCard } from "@/components/private/channel-card";
 
-export default async function Page() {
+export default async function Page({
+  params
+} : {
+  params: Promise<{channelId : string}>;
+}) {
   const channels = await getChannels();
-  // console.log(channels);
+  const session = await auth();
+  const channelId = (await params).channelId
+
+  if (!session?.user?.id) {
+    redirect("/signin");
+  }
+
+  const userObj = await db.query.users.findFirst({
+    where: eq(users.id, session.user.id),
+  });
+
+  if (!userObj) {
+    redirect("/signin");
+  }
 
   return (
+    <div>
+    <PrivateHeader user={userObj} channels={channels || []} selectedChannelId={channelId} />
     <div className="flex flex-col p-4 space-y-4">
       <h1 className="text-4xl text-center">Channels</h1>
       <div className="grid grid-cols-4 gap-4 justify-center items-center h-[calc(100vh-16rem)]">
         {channels?.map((channel) => (
-          <Link key={channel.id} href={`/dashboard/${channel.id}`} className="flex flex-col justify-center items-center">
-            <Card className="grid grid-rows-3 p-2  hover:bg-foreground hover:text-background">
-              <Avatar className="row-span-2 flex flex-col justify-center items-center h-full w-full p-2 relative rounded-none ">
-                <AvatarImage src={channel.snippet?.thumbnails?.high?.url || undefined} className="object-cover" />
-              </Avatar>
-              <CardContent className="row-span-1 flex flex-col justify-center items-center p-0">
-                <CardTitle>{channel.snippet?.title}</CardTitle>
-                <CardDescription>{channel.snippet?.description || "Your Description here..."}</CardDescription>
-              </CardContent>
-            </Card>
+          <Link key={channel.id} href={`/dashboard/${channel.id}`}>
+            <ChannelCard channel={channel}
+              className="w-[250px]"
+              aspectRatio="square"
+              width={150}
+              height={130} />
           </Link>
         ))}
       </div>
     </div>
+</div>
   );
 }
 

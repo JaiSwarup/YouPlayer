@@ -25,6 +25,7 @@ import {
   PopoverTrigger,
 } from "../ui/popover"
 import { youtube_v3 } from "googleapis";
+import { useParams, useRouter } from "next/navigation"
 
 interface Channel {
   kind: "youtube#channel",
@@ -55,15 +56,17 @@ type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
 interface ChannelSwitcherProps extends PopoverTriggerProps {
   channels: youtube_v3.Schema$Channel[]
+  selectedChannelId: string
 }
 
 export default function ChannelSwitcher({ className,
-  channels
+  channels,
+  selectedChannelId,
  }: ChannelSwitcherProps) {
+  const router = useRouter();
+  const selectedChannel = channels.find((channel) => channel.id === selectedChannelId) || channels[0]
   const [open, setOpen] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<youtube_v3.Schema$Channel>(
-    channels[0]
-  )
+
 
   return (
       <Popover open={open} onOpenChange={setOpen}>
@@ -77,13 +80,13 @@ export default function ChannelSwitcher({ className,
           >
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
-                src={selectedTeam.snippet?.thumbnails?.default?.url || undefined}
-                alt={selectedTeam.snippet?.title || undefined}
+                src={selectedChannel.snippet?.thumbnails?.default?.url || undefined}
+                alt={selectedChannel.snippet?.title || undefined}
                 // className="grayscale"
               />
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
-            {selectedTeam.snippet?.title}
+            {selectedChannel.snippet?.title}
             <ChevronsUpDown className="ml-auto opacity-50" />
           </Button>
         </PopoverTrigger>
@@ -96,8 +99,8 @@ export default function ChannelSwitcher({ className,
                     <CommandItem
                       key={channel.id}
                       onSelect={() => {
-                        setSelectedTeam(channel)
                         setOpen(false)
+                        router.push(`/dashboard/${channel.id}`)
                       }}
                       className="text-sm"
                     >
@@ -113,7 +116,7 @@ export default function ChannelSwitcher({ className,
                       <Check
                         className={cn(
                           "ml-auto",
-                          selectedTeam.id === channel.id
+                          selectedChannelId === channel.id
                             ? "opacity-100"
                             : "opacity-0"
                         )}

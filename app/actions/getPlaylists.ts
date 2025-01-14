@@ -1,7 +1,7 @@
 import { auth as getSession } from '@/lib/auth'
 import { google } from 'googleapis'
 
-export async function GET(req: Request){
+export async function getPlaylists(){
     try {
         const session = await getSession();
         if (!session) {
@@ -50,6 +50,7 @@ export async function GET(req: Request){
         // );
         // console.log(`\n ~ GET ~ enrichedPlaylists :- `, enrichedPlaylists);
 
+        return playlists;
         // return new Response(JSON.stringify(enrichedPlaylists), { status: 200 });
     } catch(error :any) {
         console.log(error);

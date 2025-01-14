@@ -9,13 +9,13 @@ const items = [
   { title: "Sign out", url: "/signout", icon: LogOutIcon },
 ];
 
-export function PrivateHeader({ user, channels }: { user: User, channels: youtube_v3.Schema$Channel[] }) {
+export function PrivateHeader({ user, channels, selectedChannelId }: { user: User, channels: youtube_v3.Schema$Channel[], selectedChannelId: string }) {
   return (
     <>
       <div className="hidden flex-col md:flex">
         <div className="border-b">
           <div className="flex h-16 items-center px-4">
-            <ChannelSwitcher channels={channels} />
+            <ChannelSwitcher channels={channels} selectedChannelId={selectedChannelId} />
             {/* <MainNav className="mx-6" /> */}
             <div className="ml-auto flex items-center space-x-4">
               {/* <Search /> */}
