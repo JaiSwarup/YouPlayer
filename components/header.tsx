@@ -6,11 +6,10 @@ export function Header() {
       <div className="container mx-auto flex flex-col gap-5 sm:gap-0 sm:flex-row justify-between items-center h-14">
         <div className="flex items-center">
           <Link href="/" className="font-bold font-mono">
-            Youtube
+          Youtube Playlist Manageer
           </Link>
         </div>
         <div>
-          <Link href="/signin">Sign In</Link>
           <div className="ml-5 inline-block">
             <ModeToggle />
           </div>

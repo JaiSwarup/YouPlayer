@@ -2,6 +2,7 @@ import { Footer } from "@/components/footer";
 import { Header } from "@/components/header";
 import { Button } from "@/components/ui/button";
 import { LayoutDashboardIcon } from "lucide-react";
+import GoogleSignInButton from "@/components/google-signin-button";
 import Link from "next/link";
 
 export default function Page() {
@@ -12,9 +13,10 @@ export default function Page() {
         <h1 className="text-7xl font-bold font-mono">Youtube Playlist Manageer</h1>
         <Link href="/dashboard">
           <Button className="w-full" variant="outline">
-            <LayoutDashboardIcon /> User Dashboard
+            {/* <LayoutDashboardIcon /> User Dashboard */}
           </Button>
         </Link>
+            <GoogleSignInButton />
       </main>
       <Footer />
     </div>
