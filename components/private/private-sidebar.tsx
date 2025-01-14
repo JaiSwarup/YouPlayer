@@ -1,33 +1,69 @@
-"use client";
+import { cn } from "@/lib/utils"
+import { Button } from "../ui/button"
+import { ScrollArea } from "../ui/scroll-area"
 
-import { LayoutDashboardIcon } from "lucide-react";
-import Link from "next/link";
-import { cn } from "@/lib/utils";
-import { usePathname } from "next/navigation";
+export type Playlist = (typeof playlists)[number]
 
-const items = [
-  { title: "Dashboard", "url": "/dashboard", icon: LayoutDashboardIcon },
-// [CODE_MARK private-sidebar-items]
-];
+export const playlists = [
+  "Recently Added",
+  "Recently Played",
+  "Top Songs",
+  "Top Albums",
+  "Top Artists",
+  "Logic Discography",
+  "Bedtime Beats",
+  "Feeling Happy",
+  "I miss Y2K Pop",
+  "Runtober",
+  "Mellow Days",
+  "Eminem Essentials",
+]
 
-export function PrivateSidebar() {
-  const pathname = usePathname();
+interface SidebarProps extends React.HTMLAttributes<HTMLDivElement> {
+  playlists: Playlist[]
+}
 
+export function PrivateSidebar({ className, 
+  // playlists
+ }: SidebarProps) {
   return (
-    <div className="flex flex-col text-sm w-8 sm:w-40 fixed min-h-screen bg-background z-20 top-8 border-r">
-      {items.map((item) => (
-        <Link
-          key={item.title}
-          href={item.url}
-          className={cn(
-            "flex items-center gap-1 p-1 hover:bg-muted m-1 rounded",
-            pathname === item.url && "bg-muted"
-          )}
-        >
-          <item.icon className="flex-shrink-0 w-4 h-4" />
-          <span className="hidden sm:block">{item.title}</span>
-        </Link>
-      ))}
+    <div className={cn("pb-12", className)}>
+      <div className="space-y-4 py-4">
+        <div className="py-2">
+          <h2 className="relative px-7 text-lg font-semibold tracking-tight">
+            Playlists
+          </h2>
+          <ScrollArea className="h-[300px] px-1">
+            <div className="space-y-1 p-2">
+              {playlists?.map((playlist, i) => (
+                <Button
+                  key={`${playlist}-${i}`}
+                  variant="ghost"
+                  className="w-full justify-start font-normal"
+                >
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    className="mr-2 h-4 w-4"
+                  >
+                    <path d="M21 15V6" />
+                    <path d="M18.5 18a2.5 2.5 0 1 0 0-5 2.5 2.5 0 0 0 0 5Z" />
+                    <path d="M12 12H3" />
+                    <path d="M16 6H3" />
+                    <path d="M12 18H3" />
+                  </svg>
+                  {playlist}
+                </Button>
+              ))}
+            </div>
+          </ScrollArea>
+        </div>
+      </div>
     </div>
-  );
+  )
 }

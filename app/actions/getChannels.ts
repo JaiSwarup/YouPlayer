@@ -7,7 +7,7 @@ export default async function getChannels(){
         if (!session) {
             return null
         }
-        console.log(session)
+        // console.log(session)
         const access_token = (session as any).access_token;
         
 
@@ -23,9 +23,11 @@ export default async function getChannels(){
             maxResults: 50, // Fetch up to 50 playlists
         });
         
-        console.log(response)
-    
-        
+        // console.log(response)
+        if (response.data.pageInfo?.totalResults === 0) {
+            return [];
+        }
+        return response.data.items;
     } catch(error :any) {
         console.log(error);
         return null

@@ -66,7 +66,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
         token.id = user.id as string;
         token.role = user.role as string;
       }
-      console.log("Account object:", account);
+      // console.log("Account object:", account);
       return token;
     },
     session({ session, token }) {

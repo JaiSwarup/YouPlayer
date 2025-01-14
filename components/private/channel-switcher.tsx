@@ -10,193 +10,120 @@ import {
   AvatarImage,
 } from "../ui/avatar"
 import { Button } from "../ui/button"
-// import {
-//   Command,
-//   CommandEmpty,
-//   CommandGroup,
-//   CommandInput,
-//   CommandItem,
-//   CommandList,
-//   CommandSeparator,
-// } from "../ui/command"
-// import {
-//   Dialog,
-//   DialogContent,
-//   DialogDescription,
-//   DialogFooter,
-//   DialogHeader,
-//   DialogTitle,
-//   DialogTrigger,
-// } from "../ui/dialog"
-import { Input } from "../ui/input"
-import { Label } from "../ui/label"
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+  CommandList,
+  CommandSeparator,
+} from "../ui/command"
 import {
   Popover,
   PopoverContent,
   PopoverTrigger,
 } from "../ui/popover"
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "../ui/select"
+import { youtube_v3 } from "googleapis";
 
-const groups = [
-  {
-    label: "Personal Account",
-    teams: [
-      {
-        label: "Alicia Koch",
-        value: "personal",
-      },
-    ],
+interface Channel {
+  kind: "youtube#channel",
+  etag: string,
+  id: string,
+  snippet: {
+    title: string,
+    description: string,
+    customUrl: string,
+    publishedAt: Date,
+    thumbnails: {
+      (key:any): {
+        url: string,
+        width: number,
+        height: number
+      }
+    },
   },
-  {
-    label: "Teams",
-    teams: [
-      {
-        label: "Acme Inc.",
-        value: "acme-inc",
-      },
-      {
-        label: "Monsters Inc.",
-        value: "monsters",
-      },
-    ],
-  },
-]
-
-type Team = (typeof groups)[number]["teams"][number]
+  // "statistics": {
+  //   "viewCount": number,
+  //   "subscriberCount": number,  // this value is rounded to three significant figures
+  //   "hiddenSubscriberCount": boolean,
+  //   "videoCount": number
+  // },
+}
 
 type PopoverTriggerProps = React.ComponentPropsWithoutRef<typeof PopoverTrigger>
 
-interface TeamSwitcherProps extends PopoverTriggerProps {}
+interface ChannelSwitcherProps extends PopoverTriggerProps {
+  channels: youtube_v3.Schema$Channel[]
+}
 
-export default function ChannelSwitcher({ className }: TeamSwitcherProps) {
+export default function ChannelSwitcher({ className,
+  channels
+ }: ChannelSwitcherProps) {
   const [open, setOpen] = React.useState(false)
-  const [selectedTeam, setSelectedTeam] = React.useState<Team>(
-    groups[0].teams[0]
+  const [selectedTeam, setSelectedTeam] = React.useState<youtube_v3.Schema$Channel>(
+    channels[0]
   )
 
   return (
-    <>
       <Popover open={open} onOpenChange={setOpen}>
         <PopoverTrigger asChild>
           <Button
             variant="outline"
             role="combobox"
             aria-expanded={open}
-            aria-label="Select a team"
+            aria-label="Select a Channel"
             className={cn("w-[200px] justify-between", className)}
           >
             <Avatar className="mr-2 h-5 w-5">
               <AvatarImage
-                src={`https://avatar.vercel.sh/${selectedTeam.value}.png`}
-                alt={selectedTeam.label}
-                className="grayscale"
+                src={selectedTeam.snippet?.thumbnails?.default?.url || undefined}
+                alt={selectedTeam.snippet?.title || undefined}
+                // className="grayscale"
               />
               <AvatarFallback>SC</AvatarFallback>
             </Avatar>
-            {selectedTeam.label}
+            {selectedTeam.snippet?.title}
             <ChevronsUpDown className="ml-auto opacity-50" />
           </Button>
         </PopoverTrigger>
         <PopoverContent className="w-[200px] p-0">
-          {/* <Command>
-            <CommandInput placeholder="Search team..." />
+          <Command>
+            <CommandInput placeholder="Search channel" />
             <CommandList>
               <CommandEmpty>No team found.</CommandEmpty>
-              {groups.map((group) => (
-                <CommandGroup key={group.label} heading={group.label}>
-                  {group.teams.map((team) => (
+              {channels.map((channel) => (
                     <CommandItem
-                      key={team.value}
+                      key={channel.id}
                       onSelect={() => {
-                        setSelectedTeam(team)
+                        setSelectedTeam(channel)
                         setOpen(false)
                       }}
                       className="text-sm"
                     >
                       <Avatar className="mr-2 h-5 w-5">
                         <AvatarImage
-                          src={`https://avatar.vercel.sh/${team.value}.png`}
-                          alt={team.label}
-                          className="grayscale"
+                          src={channel.snippet?.thumbnails?.default?.url || undefined}
+                          alt={channel.snippet?.title || undefined}
+                          // className="grayscale"
                         />
                         <AvatarFallback>SC</AvatarFallback>
                       </Avatar>
-                      {team.label}
+                      {channel.snippet?.title}
                       <Check
                         className={cn(
                           "ml-auto",
-                          selectedTeam.value === team.value
+                          selectedTeam.id === channel.id
                             ? "opacity-100"
                             : "opacity-0"
                         )}
                       />
                     </CommandItem>
                   ))}
-                </CommandGroup>
-              ))}
             </CommandList>
             <CommandSeparator />
-            <CommandList>
-              <CommandGroup>
-                <DialogTrigger asChild>
-                  <CommandItem
-                    onSelect={() => {
-                      setOpen(false)
-                      setShowNewTeamDialog(true)
-                    }}
-                  >
-                    <PlusCircle className="h-5 w-5" />
-                    Create Team
-                  </CommandItem>
-                </DialogTrigger>
-              </CommandGroup>
-            </CommandList>
-          </Command> */}
+          </Command>
         </PopoverContent>
       </Popover>
-      {/* <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Create team</DialogTitle>
-          <DialogDescription>
-            Add a new team to manage products and customers.
-          </DialogDescription>
-        </DialogHeader>
-        <div>
-          <div className="space-y-4 py-2 pb-4">
-            <div className="space-y-2">
-              <Label htmlFor="name">Team name</Label>
-              <Input id="name" placeholder="Acme Inc." />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="plan">Subscription plan</Label>
-              <Select>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a plan" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="free">
-                    <span className="font-medium">Free</span> -{" "}
-                    <span className="text-muted-foreground">
-                      Trial for two weeks
-                    </span>
-                  </SelectItem>
-                  <SelectItem value="pro">
-                    <span className="font-medium">Pro</span> -{" "}
-                    <span className="text-muted-foreground">
-                      $9/month per user
-                    </span>
-                  </SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </div>
-        </div> */}
-    </>
   )
 }

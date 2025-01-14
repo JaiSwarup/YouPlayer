@@ -61,7 +61,7 @@ async function main() {
       " ";
   }
 
-  console.log(command);
+  // console.log(command);
 }
 
 function camelToSnakeCase(str: string): string {
